@@ -1,0 +1,12 @@
+{
+	"mapproperties":
+	[
+		{
+			"center": [59.940081,30.311094],
+			"zoom": 11,
+			"minZoom": 10,
+			"maxZoom": 15,
+			"crs": "L.CRS.EPSG3857"
+		}
+	]
+}

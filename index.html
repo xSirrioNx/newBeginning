@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Новое</title>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.5/leaflet.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.5/leaflet.css">
+    <link rel="stylesheet" href="style.css"/>
+
+
+    <script>
+        // Глобальная переменная для карты
+        var map;
+        
+        // Вызываем загрузку конфигурационного файла карты
+        loadJSON('mapconfig.json',
+                function (data) {
+                    var mps = data.mapproperties;
+                    varmap(mps, 0, mps.length);
+                }
+        );
+
+        // Получаем параметры и рисуем карту
+
+        /**
+         * @param alldata - массив данных, полученных из файла настроек
+         * @param i - индекс нужного конфига в массиве
+         * @param l - длина массива (не знаю зачем)
+         */
+        function varmap(alldata, i, l) {
+            var d = alldata[i];
+            var center = d.center;
+            var zoom = d.zoom;
+            var minZoom = d.minZoom;
+            var maxZoom = d.maxZoom;
+        //Вносим параметры карты
+            map = L.map('map', {
+                                center: center,
+                                zoom: zoom,
+                                minZoom: minZoom,
+                                maxZoom: maxZoom
+                                });
+
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+        }
+
+        /**
+         *
+         * @param path - путь до файла конфига
+         * @param success - функция (callback), которая вызовется при успешной загрузке файла
+         * @param error - функция (callback), которая вызовется при ошибке загрузки
+         */
+        function loadJSON(path, success, error) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        if (success)
+                            success(JSON.parse(xhr.responseText));
+                    } else {
+                        if (error)
+                            error(xhr);
+                    }
+                }
+            };
+            xhr.open("GET", path, true);
+            xhr.send();
+        }
+    </script>
+
+
+</head>
+<body>
+<div id="map"></div>
+</body>
+</html>

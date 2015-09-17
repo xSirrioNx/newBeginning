@@ -1,0 +1,22 @@
+{"layers":
+	[
+		{ 
+			"layercodename":"osm",
+			"layername": "Open Street Map",
+			"pathto":"'http://{s}.tile.osm.org/{z}/{x}/{y}.png'",
+			"layertype":"basemap",
+			"layertypefunction":"ltilelayer",
+			"atributtion":"'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'"
+		},
+		{ 
+			"layercodename":"olen",
+			"layername": "Треки оленей",
+			"pathto":"rerere.json",
+			"layertype":"overlay",
+			"layertypefunction":"casual",
+			"geometry":"polyline",
+			"color": "#000",
+			"width": 1
+		}
+	]
+}
