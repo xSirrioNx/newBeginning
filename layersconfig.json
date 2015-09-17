@@ -6,7 +6,7 @@
 			"pathto":"'http://{s}.tile.osm.org/{z}/{x}/{y}.png'",
 			"layertype":"basemap",
 			"layertypefunction":"ltilelayer",
-			"atributtion":"'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'"
+			
 		},
 		{ 
 			"layercodename":"olen",
