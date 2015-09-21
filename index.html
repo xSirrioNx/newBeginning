@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Новое</title>
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.5/leaflet.js"></script>
+    <script src="libs/jquery/jquery.js"></script>
+    <script src="libs/leaflet/leaflet.js"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.5/leaflet.css">
+    <link rel="stylesheet" href="libs/leaflet/leaflet.css">
     <link rel="stylesheet" href="style.css"/>
 
 
     <script>
         // Глобальная переменная для карты
-        var map;
-        
+        var map, control;
+
         // Вызываем загрузку конфигурационного файла карты
         loadJSON('mapconfig.json',
                 function (data) {
@@ -35,18 +35,57 @@
             var zoom = d.zoom;
             var minZoom = d.minZoom;
             var maxZoom = d.maxZoom;
-        //Вносим параметры карты
+            //Вносим параметры карты
             map = L.map('map', {
-                                center: center,
-                                zoom: zoom,
-                                minZoom: minZoom,
-                                maxZoom: maxZoom
-                                });
+                center: center,
+                zoom: zoom,
+                minZoom: minZoom,
+                maxZoom: maxZoom
+            });
+            control = L.control.layers({}, {});
+            control.addTo(map);
 
-            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+
+            //Получаем конфиг для слоев и вызываем функцию загрузки слоев
+            loadJSON('layersconfig.json', function (data) {
+                loadLayers(data);
+            });
         }
+
+        /**
+         * Пробегаем по массиву с настройками для слоя
+         * В зависимости от типа слоя нужным видом инициализируем слой и отрисовываем его
+         *
+         * @param data - массив данных, полученных из файла настроек слоев
+         */
+
+        function loadLayers(data) {
+            var layers = data.layers;
+            $.each(layers, function (key, value) {
+                switch (value.layertypefunction) {
+                    case "ltilelayer":
+                        var tileLayer = L.tileLayer(value.pathto, {
+                            attribution: value.layername
+                        }).addTo(map);
+                        control.addBaseLayer(tileLayer, "tileLayer");
+                        break;
+                    case "casual":
+                        loadJSON(value.pathto, function (data) {
+                            var olen = data.olen;
+                            var casual = L.polyline(olen, {
+                                color: value.color,
+                                width: value.width
+                            });
+                            control.addOverlay(casual, "Casual");
+                        });
+                        break;
+                    default:
+                        alert("Not match layerType!");
+                        break;
+                }
+            });
+        }
+
 
         /**
          *
@@ -61,6 +100,7 @@
                     if (xhr.status === 200) {
                         if (success)
                             success(JSON.parse(xhr.responseText));
+
                     } else {
                         if (error)
                             error(xhr);
