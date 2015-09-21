@@ -13,6 +13,8 @@
     <script>
         // Глобальная переменная для карты
         var map, control;
+        //Инициализируем пустой массив слоев
+        var layers = new Array();
 
         // Вызываем загрузку конфигурационного файла карты
         loadJSON('mapconfig.json',
@@ -42,9 +44,6 @@
                 minZoom: minZoom,
                 maxZoom: maxZoom
             });
-            control = L.control.layers({}, {});
-            control.addTo(map);
-
 
             //Получаем конфиг для слоев и вызываем функцию загрузки слоев
             loadJSON('layersconfig.json', function (data) {
@@ -60,23 +59,29 @@
          */
 
         function loadLayers(data) {
-            var layers = data.layers;
-            $.each(layers, function (key, value) {
+            control = L.control.layers({}, {});
+            control.addTo(map);
+            var layersJSON = data.layers;
+            $.each(layersJSON, function (key, value) {
                 switch (value.layertypefunction) {
                     case "ltilelayer":
-                        var tileLayer = L.tileLayer(value.pathto, {
+                        //Добавляем в массив слоев новый слой по индексу value.layercodename
+                        layers[value.layercodename] = L.tileLayer(value.pathto, {
                             attribution: value.layername
-                        }).addTo(map);
-                        control.addBaseLayer(tileLayer, "tileLayer");
+                        });
+                        //Отрисовываем слой
+                        layers[value.layercodename].addTo(map);
+                        loadLayerControl(value);
                         break;
                     case "casual":
                         loadJSON(value.pathto, function (data) {
-                            var olen = data.olen;
-                            var casual = L.polyline(olen, {
+                            var points = data.points;
+                            //Добавляем в массив слоев новый слой по индексу value.layercodename
+                            layers[value.layercodename] = L.polyline(points, {
                                 color: value.color,
                                 width: value.width
                             });
-                            control.addOverlay(casual, "Casual");
+                            loadLayerControl(value);
                         });
                         break;
                     default:
@@ -84,8 +89,24 @@
                         break;
                 }
             });
-        }
+        };
 
+
+        function loadLayerControl(layer) {
+            switch (layer.layertype) {
+                case "basemap":
+                    //Добавляем слой из array в контрол
+                    control.addBaseLayer(layers[layer.layercodename], layer.layername);
+                    break;
+                case "overlay":
+                    //Добавляем слой из array в контрол
+                    control.addOverlay(layers[layer.layercodename], layer.layername);
+                    break;
+                default:
+                    alert("Not match layerType!");
+                    break;
+            }
+        }
 
         /**
          *
@@ -109,6 +130,31 @@
             };
             xhr.open("GET", path, true);
             xhr.send();
+        }
+
+
+        function Bool(initialValue) {
+            var bool = !!initialValue;
+            var listeners = [];
+            var returnVal = function (value) {
+                if (arguments.length) {
+                    var oldValue = bool;
+                    bool = !!value;
+                    listeners.forEach(function (listener, i, list) {
+                        listener.call(returnVal, {oldValue: oldValue, newValue: bool});
+                    });
+                }
+                return bool
+            };
+            returnVal.addListener = function (fn) {
+                if (typeof fn == "function") {
+                    listeners.push(fn);
+                }
+                else {
+                    throw "Not a function!";
+                }
+            };
+            return returnVal;
         }
     </script>
 
