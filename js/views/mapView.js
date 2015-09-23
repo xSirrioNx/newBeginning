@@ -16,11 +16,11 @@ define([
 
         var DEBUG = false;
 
-        var AppView = Backbone.View.extend({
+        var mapView = Backbone.View.extend({
 
             events: {},
 
-            el: '#map',
+            id: 'map',
 
             template: "",
 
@@ -30,30 +30,37 @@ define([
                 this.model = new Model();
                 this.listenTo(this.model, 'sync', this.handleSuccess);
                 this.listenTo(this.model, 'error', this.handleError);
+                this.listenTo(this, 'resize', this.resizeMap);
             },
             render: function () {
                 this.model.fetch();
+                return this;
             },
-            handleSuccess: function(model, response){
+            handleSuccess: function (model, response) {
                 if (DEBUG) console.debug("success", collection, response);
                 this.renderOnSuccess();
             },
-            handleError: function(model, response){
+            handleError: function (model, response) {
                 if (DEBUG) console.debug("error", collection, response);
             },
-            renderOnSuccess: function(){
-                App.map = L.map('map', {
+            renderOnSuccess: function () {
+                App.map = L.map(this.el, {
                     center: this.model.get("center"),
                     zoom: this.model.get("zoom"),
                     minZoom: this.model.get("minZoom"),
                     maxZoom: this.model.get("maxZoom")
                 });
-
                 this.layersView = new LayersView();
                 this.layersView.render();
+                return this;
+            },
+            resizeMap: function () {
+                setTimeout(function () {
+                    App.map.invalidateSize();
+                }, 500);
             }
         });
 
-        return AppView;
+        return mapView;
 
     });

@@ -13,8 +13,9 @@ requirejs.config({
         backbone:	'libs/backbone/backbone-min',
         leaflet:	'libs/leaflet/leaflet',
         less:       'libs/lessjs/less.min',
+        text:       'libs/text/text',
         bootstrap:  'libs/bootstrap/dist/js/bootstrap.min',
-        appView:    'AppView'
+        appView:    'views/appView'
 
     },
 
@@ -33,7 +34,9 @@ require([
     'appView',
 
     //
-    'less'
+    'bootstrap',
+    'less',
+    'text'
 ],function(Backbone, _, $, AppView){
     App = new AppView({
 
