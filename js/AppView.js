@@ -3,12 +3,15 @@ define([
         'underscore',
         'leaflet',
 
+        'views/layersView',
+
         'models/mapModel'
     ],
 
     function (Backbone,
               _,
               L,
+              LayersView,
               Model) {
 
         var DEBUG = false;
@@ -25,28 +28,29 @@ define([
                 _.bindAll.apply(_, [this].concat(_.functions(this)));
                 if (DEBUG) console.debug("AppView Init");
                 this.model = new Model();
+                this.listenTo(this.model, 'sync', this.handleSuccess);
+                this.listenTo(this.model, 'error', this.handleError);
             },
             render: function () {
-                var self = this;
-                this.model.fetch({
-                    success: function (collection, response) {
-                        console.debug("success", collection, response);
-                        self.renderOnSuccess();
-                    },
-                    error: function (collection, response) {
-                        console.debug("success", collection, response);
-                    }
-                });
+                this.model.fetch();
+            },
+            handleSuccess: function(model, response){
+                if (DEBUG) console.debug("success", collection, response);
+                this.renderOnSuccess();
+            },
+            handleError: function(model, response){
+                if (DEBUG) console.debug("error", collection, response);
             },
             renderOnSuccess: function(){
-                console.debug("qwe");
-                this.map = L.map('map', {
+                App.map = L.map('map', {
                     center: this.model.get("center"),
                     zoom: this.model.get("zoom"),
                     minZoom: this.model.get("minZoom"),
                     maxZoom: this.model.get("maxZoom")
                 });
-                L.tileLayer("http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png", {}).addTo(this.map);
+
+                this.layersView = new LayersView();
+                this.layersView.render();
             }
         });
 

@@ -13,6 +13,7 @@ requirejs.config({
         backbone:	'libs/backbone/backbone-min',
         leaflet:	'libs/leaflet/leaflet',
         less:       'libs/lessjs/less.min',
+        bootstrap:  'libs/bootstrap/dist/js/bootstrap.min',
         appView:    'AppView'
 
     },

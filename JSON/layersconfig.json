@@ -1,32 +1,32 @@
 {
   "layers": [
       {
-      "layercodename": "Mapnik",
-      "layername": "BlackAndWhite",
-      "pathto": "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",
-      "layertype": "basemap",
-      "layertypefunction": "ltilelayer"
+      "layerCodeName": "Mapnik",
+      "layerName": "BlackAndWhite",
+      "pathTo": "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",
+      "layerType": "layer",
+      "layerTypeFunction": "tileLayer"
     },
     {
-      "layercodename": "osm",
-      "layername": "Open Street Map",
-      "pathto": "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
-      "layertype": "basemap",
-      "layertypefunction": "ltilelayer"
+      "layerCodename": "osm",
+      "layerName": "Open Street Map",
+      "pathTo": "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+      "layerType": "baseLayer",
+      "layerTypeFunction": "tileLayer"
     },
      {
-      "layercodename": "oseam",
-      "layername": "Open Sea Map",
-      "pathto": "http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png",
-      "layertype": "overlay",
-      "layertypefunction": "ltilelayer"
+      "layerCodename": "oseam",
+      "layerName": "Open Sea Map",
+      "pathTo": "http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png",
+      "layerType": "overlay",
+      "layerTypeFunction": "tileLayer"
     },
     {
-      "layercodename": "olen",
-      "layername": "Треки оленей",
-      "pathto": "rerere.json",
-      "layertype": "overlay",
-      "layertypefunction": "casual",
+      "layerCodeName": "olen",
+      "layerName": "Треки оленей",
+      "pathTo": "JSON/points.json",
+      "layerType": "overlay",
+      "layerTypeFunction": "polyline",
       "geometry": "polyline",
       "color": "#000",
       "width": 1
